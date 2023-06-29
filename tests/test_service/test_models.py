@@ -1,10 +1,10 @@
 
 import pytest
 
-from fastapi_skeleton.core import config
-from fastapi_skeleton.models.payload import HousePredictionPayload
-from fastapi_skeleton.models.prediction import HousePredictionResult
-from fastapi_skeleton.services.models import HousePriceModel
+from aomori.core import config
+from aomori.models.payload import HousePredictionPayload
+from aomori.models.prediction import HousePredictionResult
+from aomori.services.models import HousePriceModel
 
 
 def test_prediction(test_client) -> None:

@@ -1,0 +1,56 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: aomori
+  namespace: '977982558435'
+  labels:
+    cloud.googleapis.com/location: asia-southeast1
+  annotations:
+    run.googleapis.com/launch-stage: GA
+    run.googleapis.com/description: aomori project
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/maxScale: '100'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 434.0.0
+      labels:
+        run.googleapis.com/startupProbeType: Default
+    spec:
+      containerConcurrency: 80
+      containers:
+      - args:
+        - aomori.main:app
+        - --host
+        - 0.0.0.0
+        - --port
+        - '8080'
+        env:
+        - name: IS_DEBUG
+          value: 'False'
+        - name: API_KEY
+          value: 1103371a-e057-4874-b5b9-e96417c711f3
+        - name: DEFAULT_MODEL_PATH
+          value: ./sample_model/lin_reg_california_housing_model.joblib
+        image: asia-southeast1-docker.pkg.dev/jakartaresearch/aomori/aomori:latest
+        ports:
+        - containerPort: 8080
+          name: http1
+        resources:
+          limits:
+            cpu: '1'
+            memory: 256Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 240
+      serviceAccountName: 977982558435-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+  - latestRevision: true
+    percent: 100
